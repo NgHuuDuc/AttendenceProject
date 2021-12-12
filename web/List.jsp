@@ -85,9 +85,7 @@
                                         <c:forEach items="${requestScope.listAttendence}" var="a" varStatus="loop">
                                             <tr>
                                                 <td>${loop.count}</td>
-                                                <td>
-                                                    <img src="file?path=${a.getStudent().getImage()}">
-                                                </td>
+                                                <td><img src="${a.getStudent().getImage()}"></td>
                                                 <td>${a.getStudent().getStudentCode()}</td>
                                                 <td>${a.getStudent().getFullName()}</td>
                                                 <td>
@@ -111,7 +109,7 @@
                                     <c:forEach items="${requestScope.listStudent}" var="s" varStatus="loop">
                                         <tr>
                                             <td>${loop.count}</td>
-                                            <td>${s.getImage()}</td>
+                                            <td><img src="${s.getImage()}"</td>
                                             <td>${s.getStudentCode()}</td>
                                             <td>${s.getFullName()}</td>
                                             <td>
