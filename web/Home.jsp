@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,33 +61,61 @@
                 <div class="table-wrapper">
                     <div class="table-title">
                         <div class="row">
-                            <div class="col-sm-5">
-                                <h2>Check <b>Attendance</b></h2>
+                            <div class="col-sm-3">
+                                <h3>Choose Date</h3>
+                                <jsp:useBean id="schedule" class="context.ScheduleDAO" scope="request"></jsp:useBean>
+                                    <form action="attendence" method="post">
+                                        <select name="choosenDate">
+                                        <c:if test="${requestScope.choosenDate ne null}">
+                                            <option value="${requestScope.choosenDate}" selected>${requestScope.choosenDate}</option>
+                                        </c:if>
+                                        <c:forEach items="${schedule.dateIn48Hours}" var="date" >
+                                            <c:if test="${requestScope.choosenDate ne date}">
+                                                <option value="${date}">${date}</option>
+                                            </c:if>
+                                        </c:forEach>
+                                        <input type="submit" value="Choose">
+                                    </select>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>NO</th>
-                                <th>SUBJECT NAME</th>						
-                                <th>CLASS</th>
-                                <th>SLOT</th>
-                                <th>OPTION</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Java Web Application Development (PRJ301)</td>
-                                <td>SE1518</td>                        
-                                <td>Slot 4</td>
-                                <td>
-                                    <a href="List.jsp">Check</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p class="text-success"><c:out value="${sessionScope.notification}"></c:out></p>
+                    <c:remove scope="session" var="notification"></c:remove>
+                    <c:if test="${requestScope.listSchedule ne null}">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>NO</th>
+                                    <th>SUBJECT NAME</th>						
+                                    <th>CLASS</th>
+                                    <th>SLOT</th>
+                                    <th>OPTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <jsp:useBean id="attendenceDAO" class="context.AttendenceDAO" scope="request"></jsp:useBean>
+                                <c:forEach items="${requestScope.listSchedule}" var="s" varStatus="loop">
+                                    <tr>
+                                        <td>${loop.count}</td>
+                                        <td>${s.getSubject().getSubjectName()}</td>
+                                        <td>${s.getClassName().getClassroomName()}</td>
+                                        <td>${s.getSlot().getSlotName()}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${attendenceDAO.getAttendenceByScheduleID(s.getScheduleID()).size() eq 0 }">
+                                                    <a href="list/attendence?schedule=${s.getScheduleID()}&status=check">Check Attendence</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="list/attendence?schedule=${s.getScheduleID()}&status=edit">Edit Attendence</a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:if>
                 </div>
             </div>
         </div>     
